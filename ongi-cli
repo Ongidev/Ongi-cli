@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# ongi-cli launcher - runs the Python script
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+exec python3 "$SCRIPT_DIR/ongi-cli.py" "$@"

@@ -33,15 +33,19 @@ ongi-cli --alias ani          # Create 'ani' as a shortcut
 ```
 Search prompt
   └─ Type anime name → results list (fzf or numbered)
+       └─ Escape → exit program
        └─ Select anime → episode list (fzf or numbered)
+            └─ Escape → exit program
+            └─ 0 / Back → back to Search prompt
             └─ Select episode → mpv plays
                  └─ Close mpv → popup navigator appears
                       ├─ Next / Prev / Replay → plays next episode
                       ├─ Episode list → back to episode picker
-                      └─ Quit → back to Search prompt
+                      └─ Quit → exit program
 ```
 
-**Escape / 0 at any selection screen → back to Search prompt.**  
+**Escape at any selection screen → exit.**  
+**0 / Back at episode list → back to Search prompt.**  
 **Ctrl+C → exit.**
 
 ## Playback popup controls
@@ -54,13 +58,13 @@ After mpv closes a GUI popup appears. Click a button or press the key while the 
 | `p` | Previous episode |
 | `r` | Replay current episode |
 | `s` | Back to episode list |
-| `q` / Esc | Back to search bar |
+| `q` / Esc | Exit program |
 
 > Prev/Next buttons are automatically greyed out at the start/end of a series.
 
 ## Features
 
-- **Persistent search loop** — `q` always returns to the search bar, never exits
+- **Clean exit** — `q` / Escape exits the program; `0` / Back at episode list returns to search
 - **Sub & Dub** — switch with `-d` / `-s`; save default with `--default`
 - **Multi-provider fallback** — tries Yt-mp4 → Default → Vid-mp4 → Ok → Fm-Hls → Ss-Hls → S-mp4 → Ak → Luf-Mp4
 - **AES-256-CTR decryption** — handles AllAnime's encrypted `tobeparsed` responses
@@ -79,6 +83,35 @@ After mpv closes a GUI popup appears. Click a button or press the key while the 
 - **tkinter** — included with standard Python on Windows
 
 ## Install
+
+### Quick install (PowerShell — Windows)
+
+Paste this into PowerShell to install everything automatically:
+
+```powershell
+irm https://raw.githubusercontent.com/Ongidev/Ongi-cli/main/install-ongicli.ps1 | iex
+```
+
+The script will:
+1. Check for Git Bash — offer to install it via scoop/winget if missing
+2. Verify Python 3 is present (exits with instructions if not found)
+3. Install `pycryptodome` via pip
+4. Download `ongi-cli.py` from GitHub
+5. Create launcher shims in `~/scoop/shims` (or `~/.local/bin` if scoop isn't installed)
+
+**After the script finishes**, run this to install mpv, fzf, and any other missing tools:
+
+```powershell
+ongi-cli --instmissingdep
+```
+
+Then verify everything is working:
+
+```powershell
+ongi-cli --test
+```
+
+### Manual install (Git Bash / Linux / macOS)
 
 ```bash
 # Install missing dependencies automatically

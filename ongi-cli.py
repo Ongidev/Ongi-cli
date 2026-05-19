@@ -889,10 +889,10 @@ def main():
         if not display_items:
             err(f"No {mode} results for '{query}'"); continue
 
-        # Select anime — Escape goes back to search prompt
+        # Select anime — Escape exits
         selected = select_item(display_items, "Select anime > ", f"[{mode.upper()}] {len(display_items)} results")
         if not selected:
-            warn("No selection. Try a new search."); continue
+            return
 
         selected_name = selected.rsplit("  (", 1)[0]
         target = next((r for r in results if r["name"] == selected_name), None)
@@ -926,8 +926,10 @@ def main():
                 ep_items = [f"Episode {ep}" for ep in episodes]
                 sel = select_item(ep_items, "Select episode > ",
                                   f"{title} ({len(episodes)} {mode} eps)", allow_zero=True)
-                # Escape or 0 → back to search
-                if not sel or sel == "__BACK__":
+                # Escape → exit, 0/Back → back to search
+                if sel is None:
+                    return
+                if sel == "__BACK__":
                     back_to_search = True; break
                 ep_num = sel.replace("Episode ", "")
                 current_idx = episodes.index(ep_num) if ep_num in episodes else 0
@@ -978,9 +980,9 @@ def main():
                 elif action == "s":
                     current_idx = None; break
                 elif action == "q":
-                    back_to_search = True; break
+                    return
 
-        # Inner loop exited — always return to search bar
+        # Inner loop exited — back to search
         msg("Back to search...")
 
 if __name__ == "__main__":

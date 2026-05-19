@@ -471,6 +471,7 @@ def test_apis():
 
     # Tools
     print(f"\n{C.YELLOW}[5] Required Tools:{C.RESET}")
+    missing_tools = []
     for tool in ["mpv", "fzf"]:
         try:
             subprocess.run([tool, "--version"], capture_output=True, check=True)
@@ -478,6 +479,9 @@ def test_apis():
         except (FileNotFoundError, subprocess.CalledProcessError):
             opt = "" if tool == "mpv" else " (optional)"
             print(f"  {tool}: {C.RED}MISSING{opt}{C.RESET}")
+            missing_tools.append(tool)
+    if missing_tools:
+        print(f"\n{C.YELLOW}  → Run 'ongi-cli --instmissingdep' to install missing dependencies.{C.RESET}")
     print()
 
 def install_missing():

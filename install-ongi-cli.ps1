@@ -6,7 +6,7 @@
 .DESCRIPTION
     Quick-install one-liner (paste into PowerShell):
 
-        irm https://raw.githubusercontent.com/Ongidev/Ongi-cli/main/install-ongicli.ps1 | iex
+        irm https://raw.githubusercontent.com/Ongidev/Ongi-cli/refs/heads/main/install-ongi-cli.ps1 | iex
 
     Or download and run locally:
 
@@ -90,9 +90,13 @@ if (Test-Path $shimsDir) {
 
     # bash shim (no BOM, LF line endings)
     $bashShim = "$shimsDir\ongi-cli"
-    [System.IO.File]::WriteAllText($bashShim,
-        "#!/usr/bin/env bash`nSCRIPT_DIR=`"\$(cd `"\$(dirname `"\${BASH_SOURCE[0]}`")`" && pwd)`"`nexec python3 -u `"`$SCRIPT_DIR/ongi-cli.py`" `"`$@`"`n",
-        [System.Text.UTF8Encoding]::new($false))
+    $bashContent = @'
+#!/usr/bin/env bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec python3 -u "$SCRIPT_DIR/ongi-cli.py" "$@"
+'@
+    $bashBytes = [System.Text.UTF8Encoding]::new($false).GetBytes($bashContent.Replace("`r`n", "`n"))
+    [System.IO.File]::WriteAllBytes($bashShim, $bashBytes)
 
     # .cmd shim
     @"

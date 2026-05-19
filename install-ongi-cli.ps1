@@ -46,9 +46,22 @@ if ($gitBash) {
         } elseif (Get-Command winget -ErrorAction SilentlyContinue) {
             winget install --id Git.Git -e --source winget
         } else {
-            Write-Fail "No package manager found."
-            Write-Host "  Download Git manually from: https://git-scm.com/download/win" -ForegroundColor Yellow
-            exit 1
+            Write-Warn "Neither scoop nor winget found."
+            Write-Host ""
+            Write-Host "  Scoop is a command-line installer for Windows." -ForegroundColor Yellow
+            Write-Host "  It can install Git Bash (and mpv, fzf, etc.) for you." -ForegroundColor Yellow
+            Write-Host "  It installs to ~/scoop with no admin rights required." -ForegroundColor Yellow
+            Write-Host ""
+            $scoopAns = Read-Host "Install scoop now? [Y/n]"
+            if ($scoopAns -ne 'n' -and $scoopAns -ne 'N') {
+                Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+                Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+                scoop install git
+            } else {
+                Write-Fail "No package manager available. Install Git manually:"
+                Write-Host "  https://git-scm.com/download/win" -ForegroundColor Yellow
+                exit 1
+            }
         }
     }
 }
